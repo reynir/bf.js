@@ -156,3 +156,33 @@ function End(state) {
 var hello = "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>."
 compile(hello).program(new State())
 compile(",[.,]").program(new State("Testing echo!\n"))
+
+function Loop_uncurried(b, k) {
+  return Loop(b)(k)
+}
+
+var echo = Right(Input(Loop_uncurried(
+        Output(Input(End)),
+        Left(End))));
+
+echo(new State("The EDSL in action!"))
+
+var benchmark = ">+>+>+>+>++<[>[<+++>- \
+                  >>>>> \
+                  >+>+>+>+>++<[>[<+++>- \
+                    >>>>> \
+                    >+>+>+>+>++<[>[<+++>- \
+                      >>>>> \
+                      >+>+>+>+>++<[>[<+++>- \
+                        >>>>> \
+                        +++[->+++++<]>[-]< \
+                        <<<<< \
+                      ]<<]>[-] \
+                      <<<<< \
+                    ]<<]>[-] \
+                    <<<<< \
+                  ]<<]>[-] \
+                  <<<<< \
+                 ]<<]>."
+
+// compile(benchmark).program(new State()) // Warning: takes about 2 minutes on my machine!
