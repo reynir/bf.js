@@ -45,8 +45,8 @@ Plus = \k -> \s -> k (increment s) -- increment the current cell
 -- ...
 Loop = \b -> \k -> \s -> if isZero s -- if the current cell is 0
                          then k s -- skip b
-		         else let s' = b s -- Evaluate b on s
-		              in Loop b k s' -- try again with new state
+                         else let s' = b s -- Evaluate b on s
+                              in Loop b k s' -- try again with new state
 End = \s -> s -- Does not continue and returns the current state.
 ```
 
