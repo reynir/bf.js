@@ -165,7 +165,7 @@ var echo = Right(Input(Loop_uncurried(
         Output(Input(End)),
         Left(End))));
 
-echo(new State("The EDSL in action!"))
+echo(new State("The EDSL in action!\n"))
 
 var benchmark = ">+>+>+>+>++<[>[<+++>- \
                   >>>>> \
