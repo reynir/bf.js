@@ -5,18 +5,18 @@ function puts(s) {
 /* A persistent implementation works as well. I chose to do destructive updates
  * since that seems the easiest in javascript
  */
-function State(input) {
+var State = exports.State = function State(input) {
   input = input === undefined ? [] : input.split('').map(function(c) { return c.charCodeAt(0) })
   var cellSize = 3000;
-  this.cells = Array.apply(null, Array(cellSize)).map(function(_) { return 0; });
+  var cells = Array.apply(null, Array(cellSize)).map(function(_) { return 0; });
   var dp = 0;
 
   this.increment = function() {
-    this.cells[dp] += 1;
+    cells[dp] += 1;
     return this;
   };
   this.decrement = function() {
-    this.cells[dp] -= 1;
+    cells[dp] -= 1;
     return this;
   };
   this.stepLeft = function() {
@@ -29,21 +29,21 @@ function State(input) {
   };
   this.input = function() {
     var i = input.shift();
-    this.cells[dp] = i !== undefined ? i : 0;
+    cells[dp] = i !== undefined ? i : 0;
     return this;
   };
   this.output = function() {
-    puts(String.fromCharCode(this.cells[dp]));
+    puts(String.fromCharCode(cells[dp]));
     return this;
   };
   this.isZero = function() {
-    return this.cells[dp] === 0;
+    return cells[dp] === 0;
   };
 }
 
 var keywords = "+-,.<>[]".split('');
 
-function compile(source) {
+var compile = exports.compile = function compile(source) {
   program = source.split('').filter(function(elt) {
     return keywords.indexOf(elt) !== -1;
   });
@@ -84,7 +84,7 @@ function compile_parsed(p) {
 }
 
 function compile_folder(k, c) {
-  if (typeof c === 'object') {
+  if (typeof c === 'object') { // is Array
     return Loop(compile_parsed(c))(k);
   } else if (c === '+') {
     return Plus(k);
@@ -101,43 +101,43 @@ function compile_folder(k, c) {
   }
 }
 
-function Plus(k) {
+var Plus = exports.Plus = function Plus(k) {
   return function plus(state) {
     return k(state.increment())
   }
 }
 
-function Minus(k) {
+var Minus = exports.Minus = function Minus(k) {
   return function minus(state) {
     return k(state.decrement())
   }
 }
 
-function Left(k) {
+var Left = exports.Left = function Left(k) {
   return function left(state) {
     return k(state.stepLeft())
   }
 }
 
-function Right(k) {
+var Right = exports.Right = function Right(k) {
   return function right(state) {
     return k(state.stepRight())
   }
 }
 
-function Input(k) {
+var Input = exports.Input = function Input(k) {
   return function input(state) {
     return k(state.input())
   }
 }
 
-function Output(k) {
+var Output = exports.Output = function Output(k) {
   return function output(state) {
     return k(state.output())
   }
 }
 
-function Loop(b) {
+var Loop = exports.Loop = function Loop(b) {
   return function loop (k) {
     return function loop(state) {
       while (!state.isZero()) {
@@ -148,41 +148,10 @@ function Loop(b) {
   }
 }
 
-function End(state) {
-  return state;
-}
-
-// TESTS
-var hello = "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>."
-compile(hello).program(new State())
-compile(",[.,]").program(new State("Testing echo!\n"))
-
-function Loop_uncurried(b, k) {
+var Loop_uncurried = exports.Loop_uncurried = function Loop_uncurried(b, k) {
   return Loop(b)(k)
 }
 
-var echo = Right(Input(Loop_uncurried(
-        Output(Input(End)),
-        Left(End))));
-
-echo(new State("The EDSL in action!\n"))
-
-var benchmark = ">+>+>+>+>++<[>[<+++>- \
-                  >>>>> \
-                  >+>+>+>+>++<[>[<+++>- \
-                    >>>>> \
-                    >+>+>+>+>++<[>[<+++>- \
-                      >>>>> \
-                      >+>+>+>+>++<[>[<+++>- \
-                        >>>>> \
-                        +++[->+++++<]>[-]< \
-                        <<<<< \
-                      ]<<]>[-] \
-                      <<<<< \
-                    ]<<]>[-] \
-                    <<<<< \
-                  ]<<]>[-] \
-                  <<<<< \
-                 ]<<]>."
-
-// compile(benchmark).program(new State()) // Warning: takes about 2 minutes on my machine!
+var End = exports.End = function End(state) {
+  return state;
+}
