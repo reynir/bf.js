@@ -4,11 +4,15 @@ var hello = "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<
 bf.compile(hello).program(new bf.State())
 bf.compile(",[.,]").program(new bf.State("Testing echo!\n"))
 
-var echo = bf.Right(bf.Input(bf.Loop_uncurried(
-        bf.Output(bf.Input(bf.End)),
-        bf.Left(bf.End))));
+// Open 'bf' to make it slightly more readable
+with (bf) {
+  var echo = 
+    Right(Input(Loop_uncurried(
+            Output(Input(End)),
+            Left(End))));
+  echo(new State("The EDSL in action!\n"))
+}
 
-echo(new bf.State("The EDSL in action!\n"))
 
 var benchmark = ">+>+>+>+>++<[>[<+++>- \
                   >>>>> \
